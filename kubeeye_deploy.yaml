@@ -3,7 +3,7 @@ kind: Namespace
 metadata:
   labels:
     control-plane: controller-manager
-  name: kubeeye-system
+  name: clusterinsight-system
 ---
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
@@ -138,13 +138,13 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: kubeeye-controller-manager
-  namespace: kubeeye-system
+  namespace: clusterinsight-system
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: kubeeye-leader-election-role
-  namespace: kubeeye-system
+  namespace: clusterinsight-system
 rules:
 - apiGroups:
   - ""
@@ -285,7 +285,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: kubeeye-leader-election-rolebinding
-  namespace: kubeeye-system
+  namespace: clusterinsight-system
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
@@ -293,7 +293,7 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: kubeeye-controller-manager
-  namespace: kubeeye-system
+  namespace: clusterinsight-system
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -306,7 +306,7 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: kubeeye-controller-manager
-  namespace: kubeeye-system
+  namespace: clusterinsight-system
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -319,7 +319,7 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: kubeeye-controller-manager
-  namespace: kubeeye-system
+  namespace: clusterinsight-system
 ---
 apiVersion: v1
 data:
@@ -338,7 +338,7 @@ data:
 kind: ConfigMap
 metadata:
   name: kubeeye-manager-config
-  namespace: kubeeye-system
+  namespace: clusterinsight-system
 ---
 apiVersion: v1
 kind: Service
@@ -346,7 +346,7 @@ metadata:
   labels:
     control-plane: controller-manager
   name: kubeeye-controller-manager-metrics-service
-  namespace: kubeeye-system
+  namespace: clusterinsight-system
 spec:
   ports:
   - name: https
@@ -362,7 +362,7 @@ metadata:
   labels:
     control-plane: controller-manager
   name: kubeeye-controller-manager
-  namespace: kubeeye-system
+  namespace: clusterinsight-system
 spec:
   replicas: 1
   selector:
@@ -389,7 +389,7 @@ spec:
           protocol: TCP
         resources:
           limits:
-            cpu: 500m
+            cpu: 100m
             memory: 128Mi
           requests:
             cpu: 5m
@@ -399,7 +399,7 @@ spec:
         - --metrics-bind-address=127.0.0.1:8080
         - --leader-elect
         command:
-        - /manager
+        - /ke-manager
         image: kubesphere/kubeeye:latest
         livenessProbe:
           httpGet:
@@ -416,7 +416,7 @@ spec:
           periodSeconds: 10
         resources:
           limits:
-            cpu: 500m
+            cpu: 200m
             memory: 128Mi
           requests:
             cpu: 10m
